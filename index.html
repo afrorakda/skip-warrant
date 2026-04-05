@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Skip Warrant</title>
+    
+    <link rel="icon" href="image_84.png">
+    <link rel="apple-touch-icon" href="image_84.png">
+
+    <style>
+        :root {
+            --main: #333;
+            --bg: #fff;
+            --accent: #eee;
+            --input-bg: #fafafa;
+            --radius: 15px;
+            --text-gray: #666;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; letter-spacing: -1.5px; }
+        .subtitle { font-size: 1rem; color: var(--text-gray); font-weight: 600; margin-bottom: 40px; line-height: 1.4; }
+
+        /* Main Action Button */
+        .issue-btn {
+            width: 100%;
+            padding: 24px;
+            background: var(--main);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1.2rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            -webkit-appearance: none;
+            margin-bottom: 30px;
+        }
+        .issue-btn:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* Result Area (The Warrant) */
+        #warrantArea {
+            display: none;
+            background: var(--main);
+            color: #fff;
+            padding: 30px 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            animation: slideUp 0.3s ease-out;
+            margin-bottom: 30px;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .warrant-header {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .warrant-body {
+            font-size: 1.4rem;
+            font-weight: 800;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .warrant-footer {
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        footer { margin-top: auto; padding-top: 40px; font-size: 12px; color: #777; line-height: 1.8; font-weight: 500; }
+        footer a { color: inherit; text-decoration: underline; }
+        .footer-btns { margin-top: 30px; }
+        .kofi-btn {
+            display: inline-block; background: var(--main); color: #fff;
+            padding: 14px 28px; border-radius: var(--radius);
+            text-decoration: none; font-weight: bold; font-size: 15px; margin-bottom: 15px;
+        }
+        .home-btn {
+            display: block; width: 70%; margin: 0 auto; background: var(--accent);
+            color: var(--main); border: none; padding: 12px;
+            border-radius: var(--radius); font-weight: 800; font-size: 14px; cursor: pointer;
+        }
+
+        #modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal-content {
+            background: #fff; width: 85%; max-width: 340px; padding: 35px;
+            border-radius: var(--radius); text-align: left; position: relative; color: var(--main);
+        }
+        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #888; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Skip Warrant</h1>
+    <p class="subtitle">Official permission to skip chores.<br>Don't think. Just stop.</p>
+
+    <button class="issue-btn" onclick="issueWarrant()">ISSUE WARRANT</button>
+
+    <div id="warrantArea">
+        <div class="warrant-header">Official Skip Warrant</div>
+        <div class="warrant-body" id="warrantMessage"></div>
+        <div class="warrant-footer">Approved by the Universe. No guilt required.</div>
+    </div>
+
+    <div class="footer-btns">
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️buy me a coffee</a>
+        <button class="home-btn" onclick="showModal()">Add to Home Screen</button>
+    </div>
+
+    <footer>
+        <div>No login / No tracking / No ads / Browser only</div>
+        <div><a href="https://afrorakda.com/privacy/">Privacy Policy</a> / afrorakda © 2026</div>
+    </footer>
+</div>
+
+<div id="modal" onclick="hideModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-x" onclick="hideModal()">×</span>
+        <h3>📱 Install</h3>
+        <p>Add to your home screen.</p>
+        <p>🍏 <strong>iPhone (Safari):</strong><br>Tap Share, then Add to Home Screen.</p>
+        <p>🤖 <strong>Android (Chrome):</strong><br>Tap Menu (⋮), then Add to Home Screen.</p>
+    </div>
+</div>
+
+<script>
+    const warrants = [
+        "Planetary alignment suggests that takeout is the only safe option tonight.",
+        "Due to local gravity fluctuations, vacuuming is strictly prohibited today.",
+        "The dust under the sofa has formed a sovereign nation. Do not invade.",
+        "Psychological study shows that looking at laundry for too long reduces luck.",
+        "Today is officially 'Frozen Pizza Appreciation Day'. Chores are cancelled.",
+        "Ancient wisdom says: 'A mom who naps saves the world 0.5% more'.",
+        "Magnetic fields are currently interfering with the operation of any dishwashers.",
+        "Energy preservation mode activated. Your only duty is to sit on the couch.",
+        "Statistical data proves that unwashed dishes will not disappear, but neither will you.",
+        "Your bed called. It's lonely. Go there immediately. Chores can wait.",
+        "The air quality in the kitchen is too 'tasty' for cooking. Stay out.",
+        "A rare cosmic event has made folding clothes physically impossible for 24 hours.",
+        "By order of the Grand Council of Chilling, you are relieved of all duties.",
+        "Your fatigue level has exceeded the safety limit. Emergency rest required.",
+        "The universe has decided that 'cereal for dinner' is the new gourmet standard.",
+        "Today’s forecast: 100% chance of doing absolutely nothing.",
+        "Dust bunnies are actually good luck charms. Let them thrive today.",
+        "Your internal battery is at 1%. Chores will resume after a long charge.",
+        "It is historically inaccurate to clean on a day that ends in 'Y'.",
+        "Your family's happiness is 300% higher when you are not stressed about floors.",
+        "The Wi-Fi signal is strongest when you are resting. Chores weaken the signal.",
+        "Scientific fact: Laundry grows faster when you watch it. Look away today.",
+        "You have officially earned 5,000 'I'm Tired' points. Redeem them for a nap.",
+        "The sink has requested a 24-hour vacation. Do not disturb the dishes.",
+        "Your kitchen is currently under 'maintenance'. Please order pizza.",
+        "Gravity is 2% stronger today. Walking to the laundry room is too dangerous.",
+        "The law of thermodynamics states: Heat should be used for tea, not for cleaning.",
+        "A squirrel outside told the universe you need a break. It's official.",
+        "Today is a 'No-Judgment Zone'. Whatever doesn't get done, doesn't matter.",
+        "Your house will not explode if the floor is sticky. Relax.",
+        "The mirror says you look better when you're not holding a mop.",
+        "Social duty: Resting today prevents a 'Mom-Meltdown' tomorrow.",
+        "All socks have decided to hide today. Finding them is a waste of energy.",
+        "The moon is in a phase that requires you to eat chocolate and chill.",
+        "Your home's feng shui currently depends on the laundry pile staying exactly there.",
+        "Emergency protocol: All 'Should-Dos' are replaced by 'Want-to-Dos' until further notice.",
+        "Ironing is a medieval torture. We live in the future. Skip it.",
+        "The dust bunnies are planning a party. Don't be the party pooper who cleans it.",
+        "The clouds are shaped like pillows. Take the hint.",
+        "Your coffee mug has filed a petition for more quality time with you.",
+        "Biological necessity: Your brain cells are requesting a 'Netflix & Chill' session.",
+        "Today's vibration is incompatible with the sound of a vacuum cleaner.",
+        "Doing nothing is technically 'meditation'. Congratulations on your zen day.",
+        "The cat/dog has claimed your lap. You are legally stuck there.",
+        "The sun is out. It’s a waste of sunlight to be indoors doing chores.",
+        "It’s raining. It’s too cozy for anything but a book and a blanket.",
+        "Your inner child is begging for a playdate with the sofa.",
+        "The dishes have formed a union. They are on strike until tomorrow.",
+        "A 'Skip' today keeps the burnout away.",
+        "You are the CEO of this house. Delegate everything to 'Tomorrow-Me'.",
+        "The universe is proud of you. Take a trophy nap.",
+        "Your to-do list has been temporarily blacklisted for your own safety.",
+        "The atoms in your body are vibrating at a 'Delivery Food' frequency.",
+        "Cleaning today will disturb the local butterfly effect. Keep the peace.",
+        "Your aura is too bright for mundane tasks right now.",
+        "Today’s special: Free pass to ignore every single toy on the floor.",
+        "The ironing board is actually an oversized surfboard. Wait for the wave.",
+        "Your kitchen called. It misses the smell of takeout bags.",
+        "There is a 99% probability that someone else can do it. Wait and see.",
+        "Today is 'National Leave-It-Alone Day'. Celebrate accordingly.",
+        "Your energy is a limited resource. Spend it on yourself today.",
+        "The dust is just a protective layer for your furniture.",
+        "The laundry is having a private conversation. Don't eavesdrop.",
+        "Your favorite chair is lonely. Please go sit in it.",
+        "Resting is a form of productivity for your soul.",
+        "The stars have written 'RELAX' across the sky in invisible ink.",
+        "Your brain is at full capacity. Delete the 'Chore' files for today.",
+        "The world will keep spinning even if you don't do the dishes.",
+        "Today, 'good enough' is officially 'perfect'.",
+        "Your sanity is worth more than a clean kitchen.",
+        "The floor is lava. The sofa is the safe zone. Stay there.",
+        "A ghost in the pantry says: 'Stop cleaning and eat a snack'.",
+        "The universe grants you 24 hours of total immunity from chores.",
+        "Today, your main project is 'Doing Absolutely Nothing'.",
+        "The laundry has reached a stable equilibrium. Do not touch.",
+        "The Wi-Fi will be faster if you stop using the vacuum.",
+        "A nap is the only responsible choice right now.",
+        "Your house is a home, not a showroom. Let it look lived-in.",
+        "Today, the law of gravity only applies to you sitting down.",
+        "The dishes are soaking. It's a very long process. Come back tomorrow.",
+        "Your soul needs a break. Chores are soul-crushing today.",
+        "The universe says: 'One day off won't hurt'.",
+        "Your family will survive a night without a home-cooked meal. Promise.",
+        "Takeout is the ultimate form of self-care today.",
+        "The dust bunnies are your fans. They want you to rest.",
+        "Today is 'Mom’s Sabbatical'. All requests denied.",
+        "The kitchen floor is practicing its 'Invisibility' spell. Let it be.",
+        "Your to-do list has been moved to the Spam folder.",
+        "The laundry pile is a modern art installation. Don't destroy it.",
+        "Your energy is needed for more important things, like breathing.",
+        "The universe has authorized a 24-hour 'Chores Blackout'.",
+        "Resting today is a strategic move for a better tomorrow.",
+        "The dust on the TV is just a natural filter. Keep it.",
+        "You have a 'Get Out of Chores Free' card. Use it now.",
+        "The dishes are in a meeting. Check back in 24 hours.",
+        "Today's vibration: Low on effort, high on comfort.",
+        "The laundry is maturing like fine wine. Let it sit.",
+        "Your sofa has missed you. Reconnect today.",
+        "The universe has issued a 'Rest Alert' for your area.",
+        "Chores are overrated. Peace of mind is underrated. Choose peace."
+    ];
+
+    function issueWarrant() {
+        const warrantArea = document.getElementById('warrantArea');
+        const warrantMessage = document.getElementById('warrantMessage');
+        
+        // Pick a random message
+        const randomIndex = Math.floor(Math.random() * warrants.length);
+        warrantMessage.innerText = warrants[randomIndex];
+        
+        // Show the area
+        warrantArea.style.display = 'block';
+        
+        // Scroll to the result
+        warrantArea.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showModal() { document.getElementById('modal').style.display = 'flex'; }
+    function hideModal() { document.getElementById('modal').style.display = 'none'; }
+</script>
+
+</body>
+</html>
