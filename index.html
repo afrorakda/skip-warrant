@@ -12,7 +12,7 @@
         :root {
             --main: #333;
             --bg: #fff;
-            --accent: #eee;
+            --accent: #ccc; /* image_84.pngの外枠に合わせて少し濃く */
             --input-bg: #fafafa;
             --radius: 15px;
             --text-gray: #666;
@@ -78,6 +78,7 @@
             margin-bottom: 25px;
         }
         .issue-btn:active { transform: scale(0.98); opacity: 0.9; }
+        .issue-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* Result Area (The Warrant) */
         #warrantArea {
@@ -89,7 +90,7 @@
             border-radius: var(--radius);
             text-align: center;
             animation: slideUp 0.3s ease-out;
-            margin-bottom: 30px;
+            margin-bottom: 10px; /* Copyボタンとの間隔 */
             overflow: hidden; /* スタンプを収める */
         }
         @keyframes slideUp {
@@ -104,21 +105,6 @@
             font-size: 0.6rem;
             color: rgba(255,255,255,0.4);
             font-weight: 700;
-        }
-
-        .share-btn-wrap {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-        }
-        .share-btn {
-            background: none;
-            border: none;
-            color: rgba(255,255,255,0.6);
-            font-size: 0.65rem;
-            font-weight: 800;
-            cursor: pointer;
-            padding: 3px;
         }
 
         .warrant-header {
@@ -172,9 +158,28 @@
         /* スタンプのアニメーションクラス */
         .stamp-pon {
             display: block;
-            opacity: 0.6; /* 透過率を指示通り修正 */
+            opacity: 0.6; /* 文字を透けさせる */
             transform: translate(-50%, -50%) rotate(-15deg) scale(1);
         }
+
+        /* Evidence Copy Button (New position & design) */
+        #evidenceBtn {
+            display: none; /* 初期非表示 */
+            width: 70%;
+            margin: 0 auto;
+            padding: 12px;
+            background: none;
+            border: 1px solid var(--accent); /* image_84.pngの外枠と同じ#ccc */
+            border-radius: 10px;
+            color: var(--main);
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, opacity 0.3s;
+            -webkit-appearance: none;
+            margin-bottom: 30px;
+        }
+        #evidenceBtn:active { background: #f0f0f0; }
 
         /* Toast */
         #toast {
@@ -211,7 +216,7 @@
 </head>
 <body>
 
-<div id="toast">Copied as proof!</div>
+<div id="toast">Copied as evidence!</div>
 
 <div class="container">
     <h1>Skip Warrant</h1>
@@ -221,14 +226,13 @@
 
     <div id="warrantArea">
         <div class="warrant-meta" id="warrantNumber"></div>
-        <div class="share-btn-wrap">
-            <button class="share-btn" onclick="copyProof()">Share as Proof</button>
-        </div>
         <div class="warrant-header">Official Skip Warrant</div>
         <div class="warrant-body" id="warrantMessage"></div>
         <div class="warrant-footer">Approved by the Universe. No guilt required.</div>
         <div class="stamp" id="stampArea">APPROVED</div>
     </div>
+
+    <button id="evidenceBtn" onclick="copyProof()">Use as Evidence</button>
 
     <div class="footer-btns">
         <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️buy me a coffee</a>
@@ -361,9 +365,11 @@
         const warrantNumber = document.getElementById('warrantNumber');
         const stampArea = document.getElementById('stampArea');
         const mainBtn = document.getElementById('mainButton');
+        const evidenceBtn = document.getElementById('evidenceBtn');
         
-        // 1. Reset stamp
+        // 1. Reset state (憲法指定の1アクション完結体験)
         stampArea.classList.remove('stamp-pon');
+        evidenceBtn.style.display = 'none'; // エビデンスボタンを隠す
         mainBtn.innerText = "WAITING FOR APPROVAL...";
         mainBtn.disabled = true; // 連打防止
         
@@ -371,24 +377,30 @@
         const randomIndex = Math.floor(Math.random() * warrants.length);
         warrantMessage.innerText = warrants[randomIndex];
         
-        // 3. Generate fake Serial Number
+        // 3. Generate fake Serial Number (公文書感の強化)
         const randomNo = '84-' + Math.floor(10000 + Math.random() * 90000);
         warrantNumber.innerText = 'Warrant No. ' + randomNo;
         
         // 4. Show the area
         warrantArea.style.display = 'block';
         
-        // 5. Digital Stamp Animation & Screen Shake (視覚演出による物理感)
+        // 5. Digital Stamp Animation & Screen Shake & Evidence Btn (視覚演出による物理感)
         setTimeout(() => {
             stampArea.classList.add('stamp-pon'); // スタンプ表示
             document.body.classList.add('body-shake'); // 画面揺れ
             
-            // アニメーション終了後にクラスを解除
+            // アニメーション終了後にクラスを解除、メインボタン復帰
             setTimeout(() => {
                 document.body.classList.remove('body-shake');
                 mainBtn.innerText = "ISSUE WARRANT";
                 mainBtn.disabled = false;
             }, 300); //shake duration
+
+            // 親切な配置：証拠ボタンをフェードイン
+            setTimeout(() => {
+                evidenceBtn.style.display = 'block';
+                evidenceBtn.scrollIntoView({ behavior: 'smooth' }); //ボタンまでスクロール
+            }, 500); //スタンプの少し後
 
         }, 3000); // 指示通り3秒溜める
 
@@ -397,7 +409,7 @@
     }
 
     async function copyProof() {
-        // 証拠としてコピー
+        // 証拠としてコピー（ママンの防衛手段）
         const message = document.getElementById('warrantMessage').innerText;
         const no = document.getElementById('warrantNumber').innerText;
         const proofText = `OFFICIAL SKIP WARRANT issued by the Universe.\n${no}\n"${message}"\nAPPROVED. No guilt required.`;
