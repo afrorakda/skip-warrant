@@ -16,6 +16,7 @@
             --input-bg: #fafafa;
             --radius: 15px;
             --text-gray: #666;
+            --warning: #ff4444; /* スタンプの色 */
         }
 
         body {
@@ -40,7 +41,7 @@
         }
 
         h1 { font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; letter-spacing: -1.5px; }
-        .subtitle { font-size: 1rem; color: var(--text-gray); font-weight: 600; margin-bottom: 40px; line-height: 1.4; }
+        .subtitle { font-size: 1rem; color: var(--text-gray); font-weight: 600; margin-bottom: 30px; line-height: 1.4; }
 
         /* Main Action Button */
         .issue-btn {
@@ -56,77 +57,141 @@
             cursor: pointer;
             transition: transform 0.1s, opacity 0.2s;
             -webkit-appearance: none;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .issue-btn:active { transform: scale(0.98); opacity: 0.9; }
 
         /* Result Area (The Warrant) */
         #warrantArea {
             display: none;
+            position: relative;
             background: var(--main);
             color: #fff;
-            padding: 30px 20px;
+            padding: 20px 15px;
             border-radius: var(--radius);
             text-align: center;
             animation: slideUp 0.3s ease-out;
             margin-bottom: 30px;
+            overflow: hidden; /* スタンプを収める */
         }
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .warrant-meta {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.4);
+            font-weight: 700;
+        }
+
+        .share-btn-wrap {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+        }
+        .share-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.65rem;
+            font-weight: 800;
+            cursor: pointer;
+            padding: 3px;
+        }
+
         .warrant-header {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             border-bottom: 1px solid rgba(255,255,255,0.3);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            margin-top: 15px; /* メタ情報の分確保 */
             opacity: 0.8;
         }
 
         .warrant-body {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 800;
             line-height: 1.5;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .warrant-footer {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             opacity: 0.6;
             font-style: italic;
         }
 
-        footer { margin-top: auto; padding-top: 40px; font-size: 12px; color: #777; line-height: 1.8; font-weight: 500; }
+        /* Approved Stamp */
+        .stamp {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg) scale(2);
+            font-family: 'Georgia', serif; /* 掠れた雰囲気を出すため */
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--warning);
+            border: 5px solid var(--warning);
+            padding: 10px 30px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.2s;
+            pointer-events: none;
+            z-index: 10;
+        }
+        /* スタンプのアニメーションクラス */
+        .stamp-pon {
+            display: block;
+            opacity: 0.8;
+            transform: translate(-50%, -50%) rotate(-15deg) scale(1);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--main); color: #fff;
+            padding: 12px 24px; border-radius: 20px; font-size: 0.9rem; font-weight: 700;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1000;
+        }
+
+        footer { margin-top: auto; padding-top: 40px; font-size: 11px; color: var(--text-gray); text-align: center; }
         footer a { color: inherit; text-decoration: underline; }
         .footer-btns { margin-top: 30px; }
         .kofi-btn {
             display: inline-block; background: var(--main); color: #fff;
             padding: 14px 28px; border-radius: var(--radius);
-            text-decoration: none; font-weight: bold; font-size: 15px; margin-bottom: 15px;
+            text-decoration: none; font-weight: bold; font-size: 14px; margin-bottom: 12px;
         }
         .home-btn {
             display: block; width: 70%; margin: 0 auto; background: var(--accent);
-            color: var(--main); border: none; padding: 12px;
-            border-radius: var(--radius); font-weight: 800; font-size: 14px; cursor: pointer;
+            color: var(--main); border: none; padding: 10px;
+            border-radius: var(--radius); font-weight: 800; font-size: 13px; cursor: pointer;
         }
 
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100;
+            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000;
         }
         .modal-content {
-            background: #fff; width: 85%; max-width: 340px; padding: 35px;
+            background: #fff; width: 85%; max-width: 340px; padding: 30px;
             border-radius: var(--radius); text-align: left; position: relative; color: var(--main);
         }
-        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #888; cursor: pointer; }
+        .close-x { position: absolute; top: 10px; right: 15px; font-size: 20px; color: #888; cursor: pointer; }
     </style>
 </head>
 <body>
+
+<div id="toast">Copied as proof!</div>
 
 <div class="container">
     <h1>Skip Warrant</h1>
@@ -135,9 +200,14 @@
     <button class="issue-btn" onclick="issueWarrant()">ISSUE WARRANT</button>
 
     <div id="warrantArea">
+        <div class="warrant-meta" id="warrantNumber"></div>
+        <div class="share-btn-wrap">
+            <button class="share-btn" onclick="copyProof()">Share as Proof</button>
+        </div>
         <div class="warrant-header">Official Skip Warrant</div>
         <div class="warrant-body" id="warrantMessage"></div>
         <div class="warrant-footer">Approved by the Universe. No guilt required.</div>
+        <div class="stamp" id="stampArea">APPROVED</div>
     </div>
 
     <div class="footer-btns">
@@ -156,12 +226,13 @@
         <span class="close-x" onclick="hideModal()">×</span>
         <h3>📱 Install</h3>
         <p>Add to your home screen.</p>
-        <p>🍏 <strong>iPhone (Safari):</strong><br>Tap Share, then Add to Home Screen.</p>
-        <p>🤖 <strong>Android (Chrome):</strong><br>Tap Menu (⋮), then Add to Home Screen.</p>
+        <p>🍏 iPhone (Safari): Tap Share, then Add to Home Screen.</p>
+        <p>🤖 Android (Chrome): Tap Menu (⋮), then Add to Home Screen.</p>
     </div>
 </div>
 
 <script>
+    // 憲法指定のPlaceholder色 (#bbb)
     const warrants = [
         "Planetary alignment suggests that takeout is the only safe option tonight.",
         "Due to local gravity fluctuations, vacuuming is strictly prohibited today.",
@@ -268,16 +339,44 @@
     function issueWarrant() {
         const warrantArea = document.getElementById('warrantArea');
         const warrantMessage = document.getElementById('warrantMessage');
+        const warrantNumber = document.getElementById('warrantNumber');
+        const stampArea = document.getElementById('stampArea');
         
-        // Pick a random message
+        // 1. Reset stamp (憲法指定の1アクション完結体験)
+        stampArea.classList.remove('stamp-pon');
+        
+        // 2. Pick a random message
         const randomIndex = Math.floor(Math.random() * warrants.length);
         warrantMessage.innerText = warrants[randomIndex];
         
-        // Show the area
+        // 3. Generate fake Serial Number (公文書感の強化)
+        const randomNo = '84-' + Math.floor(10000 + Math.random() * 90000);
+        warrantNumber.innerText = 'Warrant No. ' + randomNo;
+        
+        // 4. Show the area
         warrantArea.style.display = 'block';
         
-        // Scroll to the result
+        // 5. Digital Stamp Animation (視覚演出による物理感)
+        setTimeout(() => {
+            stampArea.classList.add('stamp-pon');
+        }, 1500); // 理由を読ませた後にポン
+
+        // 6. Scroll to the result
         warrantArea.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function copyProof() {
+        // 証拠としてコピー（ママンの防衛手段）
+        const message = document.getElementById('warrantMessage').innerText;
+        const no = document.getElementById('warrantNumber').innerText;
+        const proofText = `OFFICIAL SKIP WARRANT issued by the Universe.\n${no}\n"${message}"\nAPPROVED. No guilt required.`;
+        
+        try {
+            await navigator.clipboard.writeText(proofText);
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 2000);
+        } catch (err) {}
     }
 
     function showModal() { document.getElementById('modal').style.display = 'flex'; }
