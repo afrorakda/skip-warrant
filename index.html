@@ -28,7 +28,25 @@
             justify-content: center;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            /* 画面揺れアニメーション */
+            transition: transform 0.1s;
         }
+
+        /* Screen Shake Animation */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .body-shake { animation: shake 0.3s; animation-iteration-count: 1; }
 
         .container {
             width: 100%;
@@ -120,6 +138,8 @@
             font-weight: 800;
             line-height: 1.5;
             margin-bottom: 25px;
+            position: relative; /* 文字をスタンプの上に配置 */
+            z-index: 10;
         }
 
         .warrant-footer {
@@ -147,12 +167,12 @@
             opacity: 0;
             transition: opacity 0.3s, transform 0.2s;
             pointer-events: none;
-            z-index: 10;
+            z-index: 5; /* 文字の下へ配置 */
         }
         /* スタンプのアニメーションクラス */
         .stamp-pon {
             display: block;
-            opacity: 0.8;
+            opacity: 0.6; /* 透過率を指示通り修正 */
             transform: translate(-50%, -50%) rotate(-15deg) scale(1);
         }
 
@@ -197,7 +217,7 @@
     <h1>Skip Warrant</h1>
     <p class="subtitle">Official permission to skip chores.<br>Don't think. Just stop.</p>
 
-    <button class="issue-btn" onclick="issueWarrant()">ISSUE WARRANT</button>
+    <button class="issue-btn" id="mainButton" onclick="issueWarrant()">ISSUE WARRANT</button>
 
     <div id="warrantArea">
         <div class="warrant-meta" id="warrantNumber"></div>
@@ -232,7 +252,6 @@
 </div>
 
 <script>
-    // 憲法指定のPlaceholder色 (#bbb)
     const warrants = [
         "Planetary alignment suggests that takeout is the only safe option tonight.",
         "Due to local gravity fluctuations, vacuuming is strictly prohibited today.",
@@ -341,32 +360,44 @@
         const warrantMessage = document.getElementById('warrantMessage');
         const warrantNumber = document.getElementById('warrantNumber');
         const stampArea = document.getElementById('stampArea');
+        const mainBtn = document.getElementById('mainButton');
         
-        // 1. Reset stamp (憲法指定の1アクション完結体験)
+        // 1. Reset stamp
         stampArea.classList.remove('stamp-pon');
+        mainBtn.innerText = "WAITING FOR APPROVAL...";
+        mainBtn.disabled = true; // 連打防止
         
         // 2. Pick a random message
         const randomIndex = Math.floor(Math.random() * warrants.length);
         warrantMessage.innerText = warrants[randomIndex];
         
-        // 3. Generate fake Serial Number (公文書感の強化)
+        // 3. Generate fake Serial Number
         const randomNo = '84-' + Math.floor(10000 + Math.random() * 90000);
         warrantNumber.innerText = 'Warrant No. ' + randomNo;
         
         // 4. Show the area
         warrantArea.style.display = 'block';
         
-        // 5. Digital Stamp Animation (視覚演出による物理感)
+        // 5. Digital Stamp Animation & Screen Shake (視覚演出による物理感)
         setTimeout(() => {
-            stampArea.classList.add('stamp-pon');
-        }, 1500); // 理由を読ませた後にポン
+            stampArea.classList.add('stamp-pon'); // スタンプ表示
+            document.body.classList.add('body-shake'); // 画面揺れ
+            
+            // アニメーション終了後にクラスを解除
+            setTimeout(() => {
+                document.body.classList.remove('body-shake');
+                mainBtn.innerText = "ISSUE WARRANT";
+                mainBtn.disabled = false;
+            }, 300); //shake duration
+
+        }, 3000); // 指示通り3秒溜める
 
         // 6. Scroll to the result
         warrantArea.scrollIntoView({ behavior: 'smooth' });
     }
 
     async function copyProof() {
-        // 証拠としてコピー（ママンの防衛手段）
+        // 証拠としてコピー
         const message = document.getElementById('warrantMessage').innerText;
         const no = document.getElementById('warrantNumber').innerText;
         const proofText = `OFFICIAL SKIP WARRANT issued by the Universe.\n${no}\n"${message}"\nAPPROVED. No guilt required.`;
