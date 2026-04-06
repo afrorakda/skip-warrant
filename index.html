@@ -157,7 +157,6 @@
             transform: translate(-50%, -50%) rotate(-15deg) scale(1);
         }
 
-        /* Use as Evidence - Simple Text Button */
         #evidenceBtn {
             display: none;
             background: none;
@@ -173,21 +172,22 @@
         }
         #evidenceBtn:active { opacity: 0.6; }
 
-        /* Toast - Adjusted to button proximity */
+        /* Toast - Adjusted color & position for visibility */
         #toast {
             position: absolute;
-            right: 20px;
-            bottom: 230px; /* Use as Evidenceの右サイド付近に調整 */
-            background: var(--main);
-            color: #fff;
+            left: 20px; /* 左サイドに移動 */
+            bottom: 230px; 
+            background: var(--accent); /* 明るいグレーに変更 */
+            color: var(--main); /* 文字を濃く */
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 800;
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
             z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         footer { margin-top: auto; padding-top: 40px; font-size: 11px; color: var(--text-gray); text-align: center; }
